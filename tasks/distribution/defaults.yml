@@ -1,6 +1,7 @@
 ---
 # tasks file for joe-speedboat.install_ca_certs
 
-- name: Message
-  debug:
+- name: Message and fail if OS is not supported
+  fail:
     msg: "Your {{ ansible_system }} is not supported"
+

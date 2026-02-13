@@ -1,9 +1,10 @@
 # Ansible Role: install_ca_certs
-I found this role on ansible galaxy, but it had waiting pull requests and did not seem to get needed maintentance, so I took over.
+I found this role on ansible galaxy, but it had waiting pull requests and did not seem to get needed maintentance, so I took over.   
 
 ## Description
 
-Ansible role to manage CA certificates in the Linux and Windows system trust store. It's possible to add PEM formatted certificates from the local file system, a already trusted HTTP(s) URL, from raw content.
+Ansible role to manage CA certificates in the Linux system trust store.  
+It's possible to add PEM formatted certificates from the local file system, a already trusted HTTP(s) URL, from raw content.  
 
 
 ## Installation

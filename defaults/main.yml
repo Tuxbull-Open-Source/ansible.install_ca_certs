@@ -1,8 +1,6 @@
 ---
 # defaults/main.yml
 
-# Location where the certificates are stored under windows before
-# they are imported into the certificate memory of Windows.
 ca_certificates_path: '{{ ansible_env.TMP }}'
 
 # Packages to be installed.
