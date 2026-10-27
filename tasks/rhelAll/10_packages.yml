@@ -1,15 +1,15 @@
 ---
-- name: Install ca-certificates package on Red Hat
-  dnf:
-    name: 
-    - ca-certificates
-    - openssl
+- name: Install CA trust packages on RHEL-family systems
+  ansible.builtin.dnf:
+    name:
+      - ca-certificates
+      - openssl
     state: present
 
-- name: Ensure trust directory exists (RedHat)
-  file:
+- name: Ensure RHEL trust anchors directory exists
+  ansible.builtin.file:
     path: /etc/pki/ca-trust/source/anchors
     state: directory
-    mode: 0755
-
-...
+    owner: root
+    group: root
+    mode: '0755'
