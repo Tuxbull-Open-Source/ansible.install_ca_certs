@@ -1,41 +1,39 @@
-# Install CA Certs Role
+# Install CA certificates role
 
-This Ansible role installs CA certificates on Linux systems, specifically supporting Debian/Ubuntu and Red Hat-based distributions. It ensures that the necessary packages are installed and the trust directories are properly configured.
+Install PEM CA certificates into the operating-system trust store and refresh
+that trust store.
 
-## Role Variables
+## Variables
 
-- `ca_certificates`: A list of CA certificates to install. Each item can be a string path/URL or a dictionary with `src` and optional `dest_name`.
-
-### Example
+`ca_certificates` is a list of controller-local certificate paths, HTTP(S) URLs,
+or mappings with `src` and optional `dest_name`.
 
 ```yaml
 ca_certificates:
-  - src: "my-ca.crt"                    # local file from roles files folder (will be copied)
-  - src: "/path/to/my-ca.crt"           # local file (will be copied)
-  - src: "https://example.com/ca.pem"   # remote file (will be downloaded)
-    dest_name: "example-ca.crt"         # stored as example-ca.crt on target
+  - ca_demo.crt
+  - src: https://example.invalid/ca.pem
+    dest_name: example-ca.crt
 ```
 
-## Usage
+Certificates from the controller are copied from the role's `files/` directory
+or the playbook's search path. URL inputs are downloaded by the managed host.
+Use a protected internal source for private CA material. Use `.crt` destination
+names for Debian/Ubuntu because `update-ca-certificates` processes that suffix.
 
-Include the role in your playbook and define the `ca_certificates` variable as needed:
+## Example
 
 ```yaml
-- hosts: all
+- hosts: linux
+  become: true
   roles:
-    - role: joe-speedboat.install_ca_certs
+    - role: tuxbull.install_ca_certs
       vars:
         ca_certificates:
-          - "ca_demo.crt"
+          - ca_demo.crt
 ```
 
-## Supported Platforms
+## Verification
 
-- Debian/Ubuntu
-- Red Hat Enterprise Linux (RHEL) 8, 9, 10
-- AlmaLinux, Rocky Linux
-
-## Handlers
-
-- `Update CA certificates (Debian)`: Runs `update-ca-certificates` on Debian-based systems.
-- `Update CA certificates (RedHat)`: Runs `update-ca-trust` on Red Hat-based systems.
+The role refreshes the platform CA store when its managed anchors change. It
+does not validate certificate ownership, expiry, revocation, or remote HTTPS
+service behavior; verify those separately.

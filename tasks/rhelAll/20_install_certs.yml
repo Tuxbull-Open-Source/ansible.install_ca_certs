@@ -1,31 +1,22 @@
 ---
-- name: Copy CA certificate from URL (RedHat)
-  vars:
-    _src: "{{ (item.src if (item is mapping) else item) }}"
-    _is_url: "{{ _src is match('^https?://') }}"
-    _dest_name: "{{ (item.dest_name if (item is mapping and item.dest_name is defined) else (_src | basename)) }}"
-  get_url:
-    url: "{{ _src }}"
-    dest: "/etc/pki/ca-trust/source/anchors/{{ _dest_name }}"
+- name: Install CA certificate from URL on RHEL-family systems
+  ansible.builtin.get_url:
+    url: "{{ item.src if item is mapping else item }}"
+    dest: "/etc/pki/ca-trust/source/anchors/{{ item.dest_name | default((item.src if item is mapping else item) | basename) }}"
     owner: root
     group: root
     mode: '0644'
   loop: "{{ ca_certificates }}"
-  when: _is_url
-  notify: "Update CA certificates (RedHat)"
+  when: (item.src if item is mapping else item) is match('^https?://')
+  notify: Update CA certificates (RedHat)
 
-- name: Copy CA certificate from local file (RedHat)
-  vars:
-    _src: "{{ (item.src if (item is mapping) else item) }}"
-    _is_url: "{{ _src is match('^https?://') }}"
-    _dest_name: "{{ (item.dest_name if (item is mapping and item.dest_name is defined) else (_src | basename)) }}"
-  copy:
-    src: "{{ _src }}"
-    dest: "/etc/pki/ca-trust/source/anchors/{{ _dest_name }}"
+- name: Install CA certificate from controller on RHEL-family systems
+  ansible.builtin.copy:
+    src: "{{ item.src if item is mapping else item }}"
+    dest: "/etc/pki/ca-trust/source/anchors/{{ item.dest_name | default((item.src if item is mapping else item) | basename) }}"
     owner: root
     group: root
     mode: '0644'
   loop: "{{ ca_certificates }}"
-  when: not _is_url
-  notify: "Update CA certificates (RedHat)"
-...
+  when: not ((item.src if item is mapping else item) is match('^https?://'))
+  notify: Update CA certificates (RedHat)

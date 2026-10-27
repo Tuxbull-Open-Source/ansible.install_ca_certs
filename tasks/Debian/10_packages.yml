@@ -1,14 +1,16 @@
 ---
-- name: Install ca-certificates package on Debian/Ubuntu
-  apt:
-    name: 
-    - ca-certificates
-    - openssl
+- name: Install CA trust packages on Debian-family systems
+  ansible.builtin.apt:
+    name:
+      - ca-certificates
+      - openssl
     state: present
-    update_cache: yes
-- name: Ensure trust directory exists (Debian/Ubuntu)
-  file:
+    update_cache: true
+
+- name: Ensure Debian trust anchors directory exists
+  ansible.builtin.file:
     path: /usr/local/share/ca-certificates
     state: directory
-    mode: 0755
-...
+    owner: root
+    group: root
+    mode: '0755'
